@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>自定义考试配置 - 考试时间模拟器</title>
+
+  <!-- SEO 元数据 -->
+  <meta name="description" content="自定义您的英语四六级模拟考试或任何其他自定义考试。设置开始时间、考试日期以及配置各科目的倒计时环节，并支持本地保存与快速切换。完全支持离线环境。" />
+  <meta name="keywords" content="自定义考试,四六级模拟,考试流程配置,倒计时,备考工具,离线模式" />
+  <meta name="author" content="罗霖" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph 社交网络分享元数据 -->
+  <meta property="og:title" content="自定义考试配置 - CET-4/CET-6 考试时间模拟器" />
+  <meta property="og:description" content="一键定制模拟考试流程，灵活设置考试时段 and 倒计时，支持本地保存及离线使用。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/images/favicon.png" />
+  <meta property="og:url" content="./custom-exam.html" />
+
+  <!-- 移动端 & PWA 配置 -->
+  <meta name="theme-color" content="#FAF8F5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="考试时间模拟器" />
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Favicon 图标链接 -->
+  <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/images/favicon.png" />
+
+  <!-- 字体连接与加速 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Serif+SC:wght@200..900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="assets/fonts/iconfont/iconfont.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="column-wrapper">
+      <!-- 左侧栏 -->
+      <div class="left-column">
+        <div class="header-wrapper">
+          <h1>自定义考试配置</h1>
+        </div>
+
+        <div class="custom-exam-form">
+          <form id="customExamForm">
+            <div class="form-group">
+              <label for="customExamName">考试名称 / Exam Name</label>
+              <input type="text" id="customExamName" name="customExamName" placeholder="请输入考试名称" required
+                style="padding: 12px; font-family: var(--font-family)" />
+            </div>
+
+            <div class="form-group">
+              <label for="customExamStartTime">考试开始时间 / Start Time</label>
+              <div class="custom-time-picker" id="customExamStartTimePicker">
+                <div class="time-input-wrapper">
+                  <input type="text" id="customExamStartTime" name="customExamStartTime" value="12:00"
+                    class="time-input-display" readonly />
+                  <button type="button" class="picker-toggle-btn" data-target="time" aria-label="打开时间下拉">
+                    <span class="iconfont icon-youjiantou"></span>
+                  </button>
+                </div>
+                <div class="time-dropdowns">
+                  <div class="time-select-wrapper">
+                    <div class="time-select-trigger" data-part="hour">
+                      <span class="time-value">12</span>
+                      <span class="time-arrow"><span class="iconfont icon-youjiantou"></span></span>
+                    </div>
+                    <div class="time-select-dropdown" data-part="hour">
+                      <div class="time-select-options"></div>
+                    </div>
+                  </div>
+                  <div class="time-divider">:</div>
+                  <div class="time-select-wrapper">
+                    <div class="time-select-trigger" data-part="minute">
+                      <span class="time-value">00</span>
+                      <span class="time-arrow"><span class="iconfont icon-youjiantou"></span></span>
+                    </div>
+                    <div class="time-select-dropdown" data-part="minute">
+                      <div class="time-select-options"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-help-text">
+                提示：此处填入正式考试时第一个环节开始时间（格式：HH:MM，例如
+                09:30）
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="customExamDate">正式考试日期 / Exam Date</label>
+              <div class="custom-date-picker" id="customExamDatePicker">
+                <div class="date-input-wrapper">
+                  <input type="text" id="customExamDate" name="customExamDate" value="" class="date-input-display"
+                    readonly required />
+                  <button type="button" class="picker-toggle-btn" data-target="date" aria-label="打开日期下拉">
+                    <span class="iconfont icon-youjiantou"></span>
+                  </button>
+                </div>
+                <div class="date-dropdowns">
+                  <div class="date-select-wrapper">
+                    <div class="date-select-trigger" data-part="year">
+                      <span class="date-value">2024</span>
+                      <span class="date-arrow"><span class="iconfont icon-youjiantou"></span></span>
+                    </div>
+                    <div class="date-select-dropdown" data-part="year">
+                      <div class="date-select-options"></div>
+                    </div>
+                  </div>
+                  <div class="date-divider">-</div>
+                  <div class="date-select-wrapper">
+                    <div class="date-select-trigger" data-part="month">
+                      <span class="date-value">01</span>
+                      <span class="date-arrow"><span class="iconfont icon-youjiantou"></span></span>
+                    </div>
+                    <div class="date-select-dropdown" data-part="month">
+                      <div class="date-select-options"></div>
+                    </div>
+                  </div>
+                  <div class="date-divider">-</div>
+                  <div class="date-select-wrapper">
+                    <div class="date-select-trigger" data-part="day">
+                      <span class="date-value">01</span>
+                      <span class="date-arrow"><span class="iconfont icon-youjiantou"></span></span>
+                    </div>
+                    <div class="date-select-dropdown" data-part="day">
+                      <div class="date-select-options"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>考试环节 / Exam Sections</label>
+              <div class="sections-wrapper" style="padding-bottom: 5px !important">
+                <div class="section-headers-row">
+                  <div class="section-header-drag"></div>
+                  <div class="section-header-name">环节名称</div>
+                  <div class="section-header-duration">时长<br />(分钟)</div>
+                  <div class="section-header-description">环节描述</div>
+                  <div class="section-header-count">计入<br />总时间</div>
+                  <div class="section-header-action">操作</div>
+                </div>
+                <div id="sectionsContainer">
+                  <!-- 环节将通过JavaScript动态添加 -->
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <div class="form-actions-row">
+                <button type="button" id="addSectionBtn" class="add-section-btn">
+                  添加环节
+                </button>
+                <button type="submit" id="saveCustomExamBtn" form="customExamForm">
+                  保存配置
+                </button>
+                <button type="button" id="applyCustomExamBtn">
+                  应用配置
+                </button>
+              </div>
+
+              <!-- 添加显示设置选项 -->
+              <div class="display-settings-group">
+                <label>显示设置 / Display Settings</label>
+                <div class="vertical-setting-controls">
+                  <label class="setting-checkbox-vertical">
+                    <input type="checkbox" id="customShowCurrentTime" name="customShowCurrentTime" />
+                    <span>模拟考场时间</span>
+                  </label>
+                  <label class="setting-checkbox-vertical">
+                    <input type="checkbox" id="customShowCountdownTimer" name="customShowCountdownTimer" checked />
+                    <span>距离考试结束</span>
+                  </label>
+                  <label class="setting-checkbox-vertical">
+                    <input type="checkbox" id="customShowSectionTimer" name="customShowSectionTimer" checked />
+                    <span>本环节倒计时</span>
+                  </label>
+                </div>
+              </div>
+
+
+
+              <div class="form-actions-row">
+                <button type="button" id="backToMainBtn">返回主页</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- 右侧栏 - 配置列表 -->
+      <div class="right-column">
+        <h2>已保存的配置 / Saved Configs</h2>
+        <div id="savedExamsList">
+          <!-- 已保存的配置将通过JavaScript动态添加 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/custom-exam.js"></script>
+
+  <!-- Service Worker 注册 -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./sw.js")
+          .then((reg) => console.log("Service Worker 注册成功:", reg.scope))
+          .catch((err) => console.error("Service Worker 注册失败:", err));
+      });
+    }
+  </script>
+</body>
+
+</html>

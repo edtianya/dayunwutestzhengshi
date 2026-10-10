@@ -1,0 +1,28 @@
+# Claude Code / IDE generated files
+.claude/
+
+# Playwright browser automation cache
+.playwright-cli/
+.playwright-mcp/
+
+# Skills should be globally installed, not in project
+impeccable/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+
+# Sensitive / deployment-only assets (NOT for public repo)
+ga_icon.png
+scripts/.env
+SERVER.md
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

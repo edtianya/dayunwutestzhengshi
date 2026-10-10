@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>考试时间模拟器</title>
+
+    <!-- SEO 元数据 -->
+    <meta
+      name="description"
+      content="大学英语四六级考试时间模拟器，严格按照CET-4/CET-6官方考试时间设计。提供考前准备、写作、听力、收答题卡、阅读翻译等多环节全自动倒计时及进度展示，支持自定义考试配置，帮助考生科学训练考场时间分配，完全支持离线使用。"
+    />
+    <meta
+      name="keywords"
+      content="英语四六级,CET-4,CET-6,考试时间模拟,四六级倒计时,考场时间模拟,自定义考试,备考工具,离线模拟"
+    />
+    <meta name="author" content="罗霖" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph 社交网络分享元数据 -->
+    <meta property="og:title" content="CET-4/CET-6 考试时间模拟器" />
+    <meta
+      property="og:description"
+      content="四六级官方时间一键模拟，多环节高精倒计时，支持自定义考试及离线模式，考前冲刺必备时间管理工具。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="assets/images/favicon.png" />
+    <meta property="og:url" content="./index.html" />
+
+    <!-- 移动端 & PWA 配置 -->
+    <meta name="theme-color" content="#FAF8F5" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="考试时间模拟器" />
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Favicon 图标链接 -->
+    <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/images/favicon.png" />
+
+    <!-- 字体连接与加速 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Serif+SC:wght@200..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="column-wrapper">
+        <!-- 考试信息横幅 - 横跨两栏在最顶上 -->
+        <div class="header-wrapper">
+          <div class="exam-time-header" id="examTimeHeader">
+            <span id="examType">CET-4</span>
+            <span class="header-divider">|</span>
+            <span id="examDate">2026年6月13日上午</span>
+            <span class="header-divider">|</span>
+            <span id="examTimeRange">9:00 - 11:20</span>
+            <span class="header-divider">|</span>
+            <span class="exam-countdown" id="examCountdown"
+              >距离考试还有 63 天</span
+            >
+          </div>
+        </div>
+
+        <!-- 左侧栏 -->
+        <div class="left-column">
+          <h1 id="pageHeader">
+            <span id="examTitle">CET-4</span><br />考试时间模拟器
+          </h1>
+
+          <div class="real-time-display">
+            模拟考场时间：<span id="currentTimeSpan">09:00:00</span>
+          </div>
+
+          <div class="timer-display">
+            距离考试结束：<span id="timer">02:20:00</span>
+          </div>
+
+          <div
+            class="section-timer-display"
+            id="sectionTimer"
+            style="display: none"
+          >
+            本环节倒计时：<span class="time-value">00:00:00</span>
+          </div>
+
+          <div class="current-section" id="currentSection">
+            考试尚未开始，请点击开始按钮
+          </div>
+
+          <div class="countdown-container">
+            <div class="countdown" id="countdown">
+              <span class="countdown-label">下一环节：</span
+              ><span class="countdown-value">--</span>
+            </div>
+            <button onclick="nextSection()" id="nextBtn" class="next-button">
+              →
+            </button>
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+
+          <div class="controls">
+            <button onclick="startExam()" id="startBtn">开始考试</button>
+            <button onclick="pauseExam()" id="pauseBtn" disabled>暂停</button>
+            <button onclick="resetExam()" id="resetBtn">重置</button>
+            <div class="skip-selector">
+              <h3>切换环节 / Switch Section</h3>
+              <select id="sectionSelect">
+                <!-- 选项将由JavaScript动态生成 -->
+              </select>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-item">
+              <div class="stat-number" id="totalTime">140</div>
+              <div class="stat-label">总分钟</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="remainingTime">140</div>
+              <div class="stat-label">剩余分钟</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="completedSections">0</div>
+              <div class="stat-label">已完成</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧栏 -->
+        <div class="right-column">
+          <div class="section-timeline" id="timeline">
+            <!-- Sections will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- 预设选择器横跨两栏 -->
+        <div class="preset-selector-full-width">
+          <div class="custom-preset-selector">
+            <div class="preset-selector-header">
+              <h3 class="preset-selector-label">
+                选择考试预设 / Select Exam Preset
+              </h3>
+              <div class="preset-type-buttons">
+                <button
+                  type="button"
+                  class="preset-type-btn active"
+                  data-type="official"
+                  id="officialPresetBtn"
+                >
+                  官方预设
+                </button>
+                <button
+                  type="button"
+                  class="preset-type-btn"
+                  data-type="custom"
+                  id="customPresetBtn"
+                >
+                  自定义预设
+                </button>
+              </div>
+            </div>
+            <div class="preset-selector-dropdown" id="presetSelector">
+              <div class="preset-selector-selected" id="selectedPreset">
+                <span>CET-4 (大学英语四级)</span>
+                <span class="dropdown-arrow">▼</span>
+              </div>
+              <div
+                class="preset-selector-options"
+                id="presetOptions"
+                style="display: none"
+              >
+                <!-- 我的收藏分组 -->
+                <div class="preset-option-group" id="favoritePresetGroup" style="display: none;">
+                  <div class="option-group-title">我的收藏</div>
+                  <div id="favoritePresetOptions">
+                    <!-- 收藏选项由JS生成 -->
+                  </div>
+                </div>
+
+                <div class="preset-option-group" id="officialPresetGroup">
+                  <div class="option-group-title">官方预设</div>
+                  <!-- 二级/三级预设选项将由JavaScript动态生成 -->
+                </div>
+                <div
+                  class="preset-option-group"
+                  id="customPresetGroup"
+                  style="display: none"
+                >
+                  <div class="option-group-title">自定义预设</div>
+                  <div id="customPresetOptions">
+                    <!-- 自定义考试选项将由JavaScript动态生成 -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 自定义考试按钮与官方预设市场按钮 -->
+        <div class="toggle-exam-button-container">
+          <button
+            id="customExamBtn"
+            onclick="goToCustomExam()"
+            class="toggle-exam-button"
+          >
+            自定义考试设置
+          </button>
+          <button
+            id="presetMarketBtn"
+            onclick="openPresetMarket()"
+            class="toggle-exam-button preset-market-btn"
+          >
+            官方预设市场
+          </button>
+        </div>
+
+        <!-- 直接显示的显示设置控件 -->
+        <div class="inline-display-settings">
+          <div class="inline-setting-header">
+            <h3 class="display-settings-label">显示设置 / Display Settings</h3>
+            <button
+              type="button"
+              id="resetDisplaySettingsBtn"
+              class="reset-display-settings-btn"
+              title="恢复默认显示设置"
+              onclick="resetDisplaySettings()"
+            >
+              恢复默认
+            </button>
+          </div>
+          <div class="inline-setting-checkboxes">
+            <label class="setting-checkbox-horizontal">
+              <input
+                type="checkbox"
+                id="inlineShowCurrentTime"
+                name="inlineShowCurrentTime"
+                checked
+                onchange="toggleDisplaySetting('showCurrentTime', this.checked)"
+              />
+              <span>显示"模拟考场时间"</span>
+            </label>
+            <label class="setting-checkbox-horizontal">
+              <input
+                type="checkbox"
+                id="inlineShowCountdownTimer"
+                name="inlineShowCountdownTimer"
+                checked
+                onchange="
+                  toggleDisplaySetting('showCountdownTimer', this.checked)
+                "
+              />
+              <span>显示"距离考试结束"</span>
+            </label>
+            <label class="setting-checkbox-horizontal">
+              <input
+                type="checkbox"
+                id="inlineShowSectionTimer"
+                name="inlineShowSectionTimer"
+                checked
+                onchange="
+                  toggleDisplaySetting('showSectionTimer', this.checked)
+                "
+              />
+              <span>显示"本环节倒计时"</span>
+            </label>
+            <label class="setting-checkbox-horizontal">
+              <input
+                type="checkbox"
+                id="inlineShowSectionSound"
+                name="inlineShowSectionSound"
+                checked
+                onchange="
+                  toggleDisplaySetting('showSectionSound', this.checked)
+                "
+              />
+              <span>环节切换提示音</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 恢复提示（小屏幕设备使用） -->
+      <div
+        class="restore-hint"
+        id="restoreHintSmallScreen"
+        style="display: none"
+      >
+        点击恢复倒数日期
+      </div>
+    </div>
+
+    <!-- 底部区域：功能介绍、恢复提示 -->
+    <div class="bottom-bar">
+      <div class="bottom-content">
+        <div
+          class="footer-text"
+          id="showIntroBtnBottom"
+          onclick="showIntroduction()"
+        >
+          点击显示功能介绍
+        </div>
+        <div
+          class="footer-text restore-hint"
+          id="restoreHintLargeScreen"
+          style="display: none; margin-top: 10px"
+        >
+          点击恢复倒数日期
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showIntroduction() {
+        window.open("introduction.html", "_blank");
+      }
+
+      // 跳转到自定义考试配置页面
+      function goToCustomExam() {
+        window.location.href = "custom-exam.html";
+      }
+
+      // 处理考试预设选择变化
+      function handlePresetChange(value) {
+        if (value in officialExams) {
+          // 官方预设
+          currentExamType = value;
+          updateExamConfig(officialExams[value]);
+
+          // 保存到localStorage
+          localStorage.setItem("lastOfficialPreset", value);
+          localStorage.setItem("lastPresetType", "official");
+
+          // 更新显示的预设名称
+          const presetName = officialExams[value].name;
+          document.getElementById("selectedPreset").innerHTML =
+            `<span>${presetName}</span><span class="dropdown-arrow">▼</span>`;
+          // 移除自定义选中样式
+          document
+            .getElementById("selectedPreset")
+            .classList.remove("custom-selected");
+        } else {
+          // 自定义预设
+          const exam = getCustomExamsSafe().find((e) => e.name === value);
+          if (exam) {
+            // 保存到localStorage
+            localStorage.setItem("lastCustomPreset", value);
+            localStorage.setItem("lastPresetType", "custom");
+
+            // 直接应用自定义考试配置（不刷新页面）
+            if (typeof applyCustomExamConfig === "function") {
+              applyCustomExamConfig(exam);
+            }
+
+            // 更新显示的预设名称
+            document.getElementById("selectedPreset").innerHTML =
+              `<span>${value}</span><span class="dropdown-arrow">▼</span>`;
+            // 添加自定义选中样式
+            document
+              .getElementById("selectedPreset")
+              .classList.add("custom-selected");
+          }
+        }
+
+        // 隐藏下拉菜单
+        closePresetDropdown();
+      }
+
+      // 动态填充自定义考试选项
+      function getCustomExamsSafe() {
+        if (Array.isArray(window.customExams)) {
+          return window.customExams;
+        }
+        return [];
+      }
+
+      function populateCustomPresets() {
+        const customPresetOptions = document.getElementById(
+          "customPresetOptions",
+        );
+        const customExamList = getCustomExamsSafe();
+        // 清空现有选项
+        customPresetOptions.innerHTML = "";
+
+        if (customExamList.length > 0) {
+          customExamList.forEach((exam) => {
+            const option = document.createElement("div");
+            option.className = "preset-option";
+            option.textContent = exam.name;
+            option.setAttribute("data-value", exam.name);
+            // 在这里添加点击事件监听器
+            option.addEventListener("click", function () {
+              handlePresetChange(this.getAttribute("data-value"));
+            });
+            customPresetOptions.appendChild(option);
+          });
+        } else {
+          const option = document.createElement("div");
+          option.className = "preset-option disabled";
+          option.textContent = "无自定义考试";
+          option.style.color = "var(--color-text-muted)";
+          customPresetOptions.appendChild(option);
+        }
+      }
+
+      function openPresetDropdown() {
+        const options = document.getElementById("presetOptions");
+        if (options) {
+          options.style.display = "block";
+        }
+      }
+
+      function closePresetDropdown() {
+        const options = document.getElementById("presetOptions");
+        if (options) {
+          options.style.display = "none";
+        }
+      }
+
+      function setPresetTypeUI(type) {
+        const officialBtn = document.getElementById("officialPresetBtn");
+        const customBtn = document.getElementById("customPresetBtn");
+        const officialGroup = document.getElementById("officialPresetGroup");
+        const customGroup = document.getElementById("customPresetGroup");
+
+        const isCustom = type === "custom";
+
+        officialBtn.classList.toggle("active", !isCustom);
+        customBtn.classList.toggle("active", isCustom);
+        officialGroup.style.display = isCustom ? "none" : "block";
+        customGroup.style.display = isCustom ? "block" : "none";
+      }
+
+      // 在DOM加载完成后设置自定义选择器事件
+      document.addEventListener("DOMContentLoaded", function () {
+        // 为自定义选择器添加点击事件
+        const selector = document.getElementById("presetSelector");
+        const selected = document.getElementById("selectedPreset");
+        const options = document.getElementById("presetOptions");
+
+        selected.addEventListener("click", function (e) {
+          e.stopPropagation();
+          const isDisplayed = options.style.display !== "none";
+          if (isDisplayed) {
+            closePresetDropdown();
+          } else {
+            openPresetDropdown();
+          }
+        });
+
+        // 使用事件委托为所有预设选项添加点击事件
+        options.addEventListener("click", function (e) {
+          const option = e.target.closest(".preset-option");
+          if (
+            option &&
+            !option.classList.contains("disabled") &&
+            !e.target.classList.contains("preset-fav-star")
+          ) {
+            const value = option.getAttribute("data-value");
+            handlePresetChange(value);
+          }
+        });
+
+        // 点击页面其他地方关闭下拉菜单
+        document.addEventListener("click", function (e) {
+          if (!selector.contains(e.target)) {
+            closePresetDropdown();
+          }
+        });
+
+        // 预设类型切换按钮事件
+        const officialBtn = document.getElementById("officialPresetBtn");
+        const customBtn = document.getElementById("customPresetBtn");
+
+        officialBtn.addEventListener("click", function () {
+          setPresetTypeUI("official");
+          // 自动切换到上次使用的官方预设
+          const lastOfficialPreset =
+            localStorage.getItem("lastOfficialPreset") || "cet4";
+          handlePresetChange(lastOfficialPreset);
+          openPresetDropdown();
+        });
+
+        customBtn.addEventListener("click", function () {
+          setPresetTypeUI("custom");
+          populateCustomPresets();
+
+          // 自动切换到上次使用的自定义预设
+          const customExamList = getCustomExamsSafe();
+          if (customExamList.length > 0) {
+            const lastCustomPreset = localStorage.getItem("lastCustomPreset");
+            const presetToSelect =
+              lastCustomPreset &&
+              customExamList.some((e) => e.name === lastCustomPreset)
+                ? lastCustomPreset
+                : customExamList[0].name;
+            handlePresetChange(presetToSelect);
+          }
+
+          openPresetDropdown();
+        });
+
+        // 初始化恢复上次预设状态（官方预设部分）
+        const lastPresetType =
+          localStorage.getItem("lastPresetType") || "official";
+        const lastOfficialPreset =
+          localStorage.getItem("lastOfficialPreset") || "cet4";
+
+        if (lastPresetType !== "custom") {
+          setPresetTypeUI("official");
+          handlePresetChange(lastOfficialPreset);
+        }
+
+        populateCustomPresets();
+      });
+    </script>
+
+    <!-- 官方预设市场模态框 -->
+    <div class="market-modal-backdrop" id="presetMarketModal" style="display: none;" onclick="handleMarketBackdropClick(event)">
+      <div class="market-modal-card" onclick="event.stopPropagation()">
+        <div class="market-modal-header">
+          <h2>官方预设市场 / Official Preset Market</h2>
+          <button class="market-modal-close" onclick="closePresetMarket()">&times;</button>
+        </div>
+        <div class="market-modal-search-bar">
+          <input type="text" id="marketSearchInput" placeholder="搜索官方预设... / Search presets..." oninput="filterMarketPresets()" />
+          <span class="market-favorites-count" id="marketFavCount">已收藏: 0/10</span>
+        </div>
+        
+        <div class="market-content-layout">
+          <div class="market-categories-sidebar" id="marketCategoriesSidebar">
+            <!-- 分类按钮由JS生成 -->
+          </div>
+          <div class="market-presets-grid" id="marketPresetsGrid">
+            <!-- 预设卡片由JS生成 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+      // ==========================================
+      // 官方预设市场与收藏功能 JavaScript 逻辑
+      // ==========================================
+
+      let currentMarketCategory = "全部";
+
+      // 1. 收藏相关数据读取与存储
+      function getFavoritePresets() {
+        try {
+          const favs = localStorage.getItem("favOfficialPresets");
+          return favs ? JSON.parse(favs) : [];
+        } catch (e) {
+          console.error("读取收藏预设失败", e);
+          return [];
+        }
+      }
+
+      function saveFavoritePresets(favs) {
+        try {
+          localStorage.setItem("favOfficialPresets", JSON.stringify(favs));
+        } catch (e) {
+          console.error("保存收藏预设失败", e);
+        }
+      }
+
+      function toggleFavorite(id) {
+        let favs = getFavoritePresets();
+        const index = favs.indexOf(id);
+        if (index > -1) {
+          favs.splice(index, 1);
+          showToast("已取消收藏");
+        } else {
+          if (favs.length >= 10) {
+            showToast("已达收藏上限（最多10个）");
+            return;
+          }
+          favs.push(id);
+          showToast("已成功收藏");
+        }
+        saveFavoritePresets(favs);
+        updatePresetsUI();
+      }
+
+      // 2. 吐司提示组件
+      function showToast(msg) {
+        const existing = document.querySelector(".market-toast");
+        if (existing) {
+          existing.remove();
+        }
+
+        const toast = document.createElement("div");
+        toast.className = "market-toast";
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.remove();
+        }, 2500);
+      }
+
+      // 3. 动态生成下拉列表预设选项
+      function createPresetOptionElement(id, exam, className, isFav) {
+        const option = document.createElement("div");
+        option.className = `preset-option ${className || ""}`;
+        option.setAttribute("data-value", id);
+
+        const textSpan = document.createElement("span");
+        textSpan.className = "preset-option-text";
+        textSpan.textContent = exam.name;
+        option.appendChild(textSpan);
+
+        const star = document.createElement("span");
+        star.className = `preset-fav-star${isFav ? " active" : ""}`;
+        star.innerHTML = isFav ? "★" : "☆";
+        star.setAttribute("data-preset-id", id);
+        star.addEventListener("click", function (e) {
+          e.stopPropagation();
+          toggleFavorite(id);
+        });
+        option.appendChild(star);
+
+        return option;
+      }
+
+      function populateFavoritePresets() {
+        const favoriteGroup = document.getElementById("favoritePresetGroup");
+        const favoriteOptions = document.getElementById("favoritePresetOptions");
+        if (!favoriteGroup || !favoriteOptions) return;
+
+        const favorites = getFavoritePresets();
+        if (favorites.length === 0) {
+          favoriteGroup.style.display = "none";
+          favoriteOptions.innerHTML = "";
+          return;
+        }
+
+        favoriteGroup.style.display = "block";
+        favoriteOptions.innerHTML = "";
+
+        favorites.forEach((id) => {
+          const exam = officialExams[id];
+          if (exam) {
+            const option = createPresetOptionElement(id, exam, "level2-child", true);
+            favoriteOptions.appendChild(option);
+          }
+        });
+      }
+
+      function populateOfficialPresets() {
+        const officialPresetGroup = document.getElementById("officialPresetGroup");
+        if (!officialPresetGroup) return;
+
+        // 清空现有动态内容，保留标题
+        officialPresetGroup.innerHTML = '<div class="option-group-title">官方预设</div>';
+
+        const favorites = getFavoritePresets();
+
+        officialPresetCategories.forEach((category) => {
+          // 渲染二级标题
+          const lvl2Title = document.createElement("div");
+          lvl2Title.className = "preset-level2-title";
+          lvl2Title.textContent = category.name;
+          officialPresetGroup.appendChild(lvl2Title);
+
+          if (category.items) {
+            category.items.forEach((id) => {
+              const exam = officialExams[id];
+              if (exam) {
+                const option = createPresetOptionElement(
+                  id,
+                  exam,
+                  "level2-child",
+                  favorites.includes(id),
+                );
+                officialPresetGroup.appendChild(option);
+              }
+            });
+          }
+
+          if (category.subcategories) {
+            category.subcategories.forEach((sub) => {
+              // 渲染三级标题
+              const lvl3Title = document.createElement("div");
+              lvl3Title.className = "preset-level3-title";
+              lvl3Title.textContent = sub.name;
+              officialPresetGroup.appendChild(lvl3Title);
+
+              sub.items.forEach((id) => {
+                const exam = officialExams[id];
+                if (exam) {
+                  const option = createPresetOptionElement(
+                    id,
+                    exam,
+                    "level3-child",
+                    favorites.includes(id),
+                  );
+                  officialPresetGroup.appendChild(option);
+                }
+              });
+            });
+          }
+        });
+      }
+
+      function updatePresetsUI() {
+        populateFavoritePresets();
+        populateOfficialPresets();
+        updateMarketFavoritesCount();
+        if (document.getElementById("presetMarketModal").style.display !== "none") {
+          renderMarketPresets();
+        }
+      }
+
+      // 4. 预设市场模态框逻辑
+      function openPresetMarket() {
+        const modal = document.getElementById("presetMarketModal");
+        if (modal) {
+          modal.style.display = "flex";
+          document.getElementById("marketSearchInput").value = "";
+          currentMarketCategory = "全部";
+          renderMarketCategories();
+          renderMarketPresets();
+          updateMarketFavoritesCount();
+        }
+      }
+
+      function closePresetMarket() {
+        const modal = document.getElementById("presetMarketModal");
+        if (modal) {
+          modal.style.display = "none";
+        }
+      }
+
+      function handleMarketBackdropClick(e) {
+        if (e.target.id === "presetMarketModal") {
+          closePresetMarket();
+        }
+      }
+
+      function updateMarketFavoritesCount() {
+        const favs = getFavoritePresets();
+        const countSpan = document.getElementById("marketFavCount");
+        if (countSpan) {
+          countSpan.textContent = `已收藏: ${favs.length}/10`;
+        }
+      }
+
+      function renderMarketCategories() {
+        const sidebar = document.getElementById("marketCategoriesSidebar");
+        if (!sidebar) return;
+
+        sidebar.innerHTML = "";
+
+        // 添加 "全部" 分类
+        const allBtn = document.createElement("button");
+        allBtn.className = `market-category-btn${currentMarketCategory === "全部" ? " active" : ""}`;
+        allBtn.textContent = "全部预设";
+        allBtn.addEventListener("click", () => selectMarketCategory("全部"));
+        sidebar.appendChild(allBtn);
+
+        // 添加具体分类
+        officialPresetCategories.forEach((cat) => {
+          const btn = document.createElement("button");
+          btn.className = `market-category-btn${currentMarketCategory === cat.name ? " active" : ""}`;
+          btn.textContent = cat.name;
+          btn.addEventListener("click", () => selectMarketCategory(cat.name));
+          sidebar.appendChild(btn);
+        });
+      }
+
+      function selectMarketCategory(catName) {
+        currentMarketCategory = catName;
+        renderMarketCategories();
+        renderMarketPresets();
+      }
+
+      function renderMarketPresets() {
+        const grid = document.getElementById("marketPresetsGrid");
+        if (!grid) return;
+
+        grid.innerHTML = "";
+        const query = document.getElementById("marketSearchInput").value.trim().toLowerCase();
+        const favorites = getFavoritePresets();
+
+        let matchedPresetIds = [];
+
+        if (currentMarketCategory === "全部") {
+          Object.keys(officialExams).forEach((id) => {
+            matchedPresetIds.push(id);
+          });
+        } else {
+          const cat = officialPresetCategories.find((c) => c.name === currentMarketCategory);
+          if (cat) {
+            if (cat.items) {
+              matchedPresetIds.push(...cat.items);
+            }
+            if (cat.subcategories) {
+              cat.subcategories.forEach((sub) => {
+                matchedPresetIds.push(...sub.items);
+              });
+            }
+          }
+        }
+
+        // 搜索词过滤
+        if (query) {
+          matchedPresetIds = matchedPresetIds.filter((id) => {
+            const exam = officialExams[id];
+            return (
+              exam &&
+              (exam.name.toLowerCase().includes(query) ||
+                (exam.examDate && exam.examDate.toLowerCase().includes(query)) ||
+                (exam.examTimeRange && exam.examTimeRange.toLowerCase().includes(query)))
+            );
+          });
+        }
+
+        if (matchedPresetIds.length === 0) {
+          const emptyDiv = document.createElement("div");
+          emptyDiv.style.gridColumn = "1 / -1";
+          emptyDiv.style.textAlign = "center";
+          emptyDiv.style.padding = "40px";
+          emptyDiv.style.color = "var(--color-text-muted)";
+          emptyDiv.textContent = "未找到匹配的预设 / No presets found";
+          grid.appendChild(emptyDiv);
+          return;
+        }
+
+        matchedPresetIds.forEach((id) => {
+          const exam = officialExams[id];
+          if (!exam) return;
+
+          const isFav = favorites.includes(id);
+
+          const card = document.createElement("div");
+          card.className = "market-preset-card";
+
+          // Header
+          const header = document.createElement("div");
+          header.className = "market-preset-header";
+
+          const titleArea = document.createElement("div");
+          titleArea.className = "market-preset-title-area";
+
+          const name = document.createElement("span");
+          name.className = "market-preset-name";
+          name.textContent = exam.name;
+          titleArea.appendChild(name);
+
+          let badgeText = "";
+          const parentCat = officialPresetCategories.find((c) => {
+            if (c.items && c.items.includes(id)) return true;
+            if (c.subcategories) {
+              return c.subcategories.some((s) => s.items.includes(id));
+            }
+            return false;
+          });
+          if (parentCat) {
+            badgeText = parentCat.name;
+          }
+          if (badgeText) {
+            const badge = document.createElement("span");
+            badge.className = "market-preset-badge";
+            badge.textContent = badgeText;
+            titleArea.appendChild(badge);
+          }
+
+          header.appendChild(titleArea);
+
+          const favBtn = document.createElement("button");
+          favBtn.className = `market-preset-fav-btn${isFav ? " active" : ""}`;
+          favBtn.innerHTML = isFav ? "★" : "☆";
+          favBtn.title = isFav ? "取消收藏" : "加入收藏";
+          favBtn.addEventListener("click", () => {
+            toggleFavorite(id);
+          });
+          header.appendChild(favBtn);
+
+          card.appendChild(header);
+
+          // Meta
+          const meta = document.createElement("div");
+          meta.className = "market-preset-meta";
+
+          const durationMin = Math.round(exam.totalTime / 60);
+          const numSections = exam.sections ? exam.sections.length : 0;
+
+          const timeInfo = document.createElement("div");
+          timeInfo.className = "market-preset-meta-item";
+          timeInfo.innerHTML = `<span>时长：${durationMin}分钟 | ${numSections}个环节</span>`;
+          meta.appendChild(timeInfo);
+
+          if (exam.examDate || exam.examTimeRange) {
+            const dateInfo = document.createElement("div");
+            dateInfo.className = "market-preset-meta-item";
+            dateInfo.innerHTML = `<span>时间：${exam.examDate || ""} ${exam.examTimeRange || ""}</span>`;
+            meta.appendChild(dateInfo);
+          }
+
+          card.appendChild(meta);
+
+          // Section Preview
+          if (exam.sections && exam.sections.length > 0) {
+            const sectionsDiv = document.createElement("div");
+            sectionsDiv.className = "market-preset-sections";
+
+            const secTitle = document.createElement("span");
+            secTitle.className = "market-preset-sections-title";
+            secTitle.textContent = "环节预览 / Preview:";
+            sectionsDiv.appendChild(secTitle);
+
+            const list = document.createElement("div");
+            list.className = "market-preset-sections-list";
+
+            const displaySections = exam.sections.slice(0, 4);
+            displaySections.forEach((sec, idx) => {
+              const tag = document.createElement("span");
+              tag.className = "market-preset-section-tag";
+              tag.textContent = sec.name;
+              list.appendChild(tag);
+
+              if (idx < displaySections.length - 1 || exam.sections.length > 4) {
+                const arrow = document.createElement("span");
+                arrow.className = "market-preset-section-arrow";
+                arrow.textContent = "→";
+                list.appendChild(arrow);
+              }
+            });
+
+            if (exam.sections.length > 4) {
+              const moreTag = document.createElement("span");
+              moreTag.className = "market-preset-section-tag";
+              moreTag.style.fontStyle = "italic";
+              moreTag.textContent = `等共${exam.sections.length}个`;
+              list.appendChild(moreTag);
+            }
+
+            sectionsDiv.appendChild(list);
+            card.appendChild(sectionsDiv);
+          }
+
+          // Actions
+          const actions = document.createElement("div");
+          actions.className = "market-preset-actions";
+
+          const applyBtn = document.createElement("button");
+          applyBtn.className = "market-preset-apply-btn";
+          applyBtn.textContent = "一键应用 / Apply";
+          applyBtn.addEventListener("click", () => {
+            handlePresetChange(id);
+            closePresetMarket();
+            showToast(`已应用预设: ${exam.name}`);
+          });
+          actions.appendChild(applyBtn);
+
+          card.appendChild(actions);
+
+          grid.appendChild(card);
+        });
+      }
+
+      function filterMarketPresets() {
+        renderMarketPresets();
+      }
+
+      // 在 script.js 加载完成后恢复预设状态
+      document.addEventListener("DOMContentLoaded", function () {
+        // 等待 script.js 的 DOMContentLoaded 执行完成
+        setTimeout(function () {
+          updatePresetsUI();
+          const lastPresetType =
+            localStorage.getItem("lastPresetType") || "official";
+          const customExamList = window.customExams || [];
+
+          if (lastPresetType === "custom" && customExamList.length > 0) {
+            const lastCustomPreset = localStorage.getItem("lastCustomPreset");
+            const presetToSelect =
+              lastCustomPreset &&
+              customExamList.some((e) => e.name === lastCustomPreset)
+                ? lastCustomPreset
+                : customExamList[0].name;
+
+            // 应用自定义考试配置
+            const exam = customExamList.find((e) => e.name === presetToSelect);
+            if (exam) {
+              applyCustomExamConfig(exam);
+
+              // 更新 UI
+              setPresetTypeUI("custom");
+              document.getElementById("selectedPreset").innerHTML =
+                `<span>${presetToSelect}</span><span class="dropdown-arrow">▼</span>`;
+              document
+                .getElementById("selectedPreset")
+                .classList.add("custom-selected");
+            }
+          } else {
+            // 恢复官方预设
+            const lastOfficialPreset =
+              localStorage.getItem("lastOfficialPreset") || "cet4";
+            if (officialExams && lastOfficialPreset in officialExams) {
+              handlePresetChange(lastOfficialPreset);
+            }
+          }
+        }, 0);
+      });
+    </script>
+    <!-- Service Worker 注册 -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then((reg) => console.log("Service Worker 注册成功:", reg.scope))
+            .catch((err) => console.error("Service Worker 注册失败:", err));
+        });
+      }
+    </script>
+  </body>
+</html>
